@@ -1,0 +1,70 @@
+name: meditrack_ai
+description: MediTrack AI - Premium Medicine Reminder & Tracker
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+
+  # Navigation
+  go_router: ^14.2.7
+
+  # Firebase
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.2.0
+  cloud_firestore: ^5.4.0
+  google_sign_in: ^6.2.1
+
+  # Notifications
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
+
+  # UI & Animations
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  lottie: ^3.1.2
+  cached_network_image: ^3.3.1
+  fl_chart: ^0.68.0
+  table_calendar: ^3.1.2
+  percent_indicator: ^4.2.3
+  animated_text_kit: ^4.2.3
+
+  # Utilities
+  intl: ^0.19.0
+  http: ^1.2.2
+  shared_preferences: ^2.3.2
+  uuid: ^4.4.2
+  image_picker: ^1.1.2
+  path_provider: ^2.1.4
+  connectivity_plus: ^6.0.3
+
+  # PDF Export
+  pdf: ^3.11.1
+  printing: ^5.13.2
+
+  # Audio
+  audioplayers: ^6.1.0
+
+  # Icons & Fonts
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/animations/
+    - assets/icons/
+    - assets/sounds/
