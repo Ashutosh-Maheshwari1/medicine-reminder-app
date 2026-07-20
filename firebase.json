@@ -1,0 +1,29 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "meditrack-ai-c5d5a",
+          "appId": "1:483958825006:android:91d91ccd82bddb2ee53fbf",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "web": {
+        "default": {
+          "projectId": "meditrack-ai-c5d5a",
+          "appId": "1:483958825006:web:acac1fa48a5ea521e53fbf",
+          "measurementId": "G-PHBLGVBWTQ"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "meditrack-ai-c5d5a",
+          "configurations": {
+            "android": "1:483958825006:android:91d91ccd82bddb2ee53fbf",
+            "web": "1:483958825006:web:acac1fa48a5ea521e53fbf"
+          }
+        }
+      }
+    }
+  }
+}
