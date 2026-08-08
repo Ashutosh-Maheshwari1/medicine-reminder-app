@@ -2,23 +2,6 @@
   <img src="assets/icons/Icon-192.png" width="120" height="120" alt="MediTrack AI Logo" />
   <h1>💊 MediTrack AI</h1>
   <p><b>State-of-the-Art Smart Medicine Reminder & Health Analytics System</b></p>
-
-  <!-- GitHub Badges -->
-  [![GitHub Stars](https://img.shields.io/github/stars/Ashutosh-Maheshwari1/medicine-reminder-app?style=for-the-badge&logo=github&color=gold)](https://github.com/Ashutosh-Maheshwari1/medicine-reminder-app/stargazers)
-  [![GitHub Forks](https://img.shields.io/github/forks/Ashutosh-Maheshwari1/medicine-reminder-app?style=for-the-badge&logo=github&color=blue)](https://github.com/Ashutosh-Maheshwari1/medicine-reminder-app/network/members)
-  [![GitHub Issues](https://img.shields.io/github/issues/Ashutosh-Maheshwari1/medicine-reminder-app?style=for-the-badge&logo=github&color=red)](https://github.com/Ashutosh-Maheshwari1/medicine-reminder-app/issues)
-  [![GitHub License](https://img.shields.io/github/license/Ashutosh-Maheshwari1/medicine-reminder-app?style=for-the-badge&color=green)](https://github.com/Ashutosh-Maheshwari1/medicine-reminder-app/blob/main/LICENSE)
-  [![GitHub Repo Size](https://img.shields.io/github/repo-size/Ashutosh-Maheshwari1/medicine-reminder-app?style=for-the-badge&logo=github&color=purple)](https://github.com/Ashutosh-Maheshwari1/medicine-reminder-app)
-  
-  <br/>
-
-  <!-- Tech Stack Badges -->
-  [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
-  [![Firebase](https://img.shields.io/badge/Firebase-Integrated-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
-  [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-  [![Android](https://img.shields.io/badge/Android-API%2023+-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://android.com)
-
-  <br />
 </div>
 
 ---
