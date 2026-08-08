@@ -2,6 +2,16 @@
   <img src="assets/images/logo.png" width="150" height="150" alt="MediTrack AI Logo" style="border-radius: 24px;" />
   <h1>💊 MediTrack AI</h1>
   <p><b>State-of-the-Art Smart Medicine Reminder & Health Analytics System</b></p>
+
+  <br/>
+
+  <a href="https://github.com/Ashutosh-Maheshwari1/medicine-reminder-app/releases/latest">
+    <img src="https://img.shields.io/badge/📥_Download_Android_APK-v1.0.0-2EA44F?style=for-the-badge&logo=android&logoColor=white" alt="Download APK" />
+  </a>
+  &nbsp;
+  <a href="https://Ashutosh-Maheshwari1.github.io/medicine-reminder-app/">
+    <img src="https://img.shields.io/badge/🌐_Launch_Web_App-Live_Demo-02569B?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Live Web App" />
+  </a>
 </div>
 
 ---
