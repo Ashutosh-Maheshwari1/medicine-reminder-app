@@ -64,6 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final nextReminder = ref.watch(nextReminderProvider);
     final currentLang = ref.watch(localeProvider);
     final isHindi = currentLang == AppLanguage.hindi;
+    final weeklyAdherence = ref.watch(weeklyAdherenceProvider);
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
@@ -79,7 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           slivers: [
             // App Bar
             SliverToBoxAdapter(
-              child: _buildAppBar(context, isDark, userAsync),
+              child: _buildAppBar(context, isDark, userAsync, isHindi),
             ),
 
             // Today's Progress Card
@@ -207,7 +208,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, bool isDark, AsyncValue userAsync) {
+  Widget _buildAppBar(BuildContext context, bool isDark, AsyncValue userAsync, bool isHindi) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 60, 20, 24),
       child: Row(
