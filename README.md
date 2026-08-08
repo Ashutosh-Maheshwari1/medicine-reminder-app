@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/icons/Icon-192.png" width="120" height="120" alt="MediTrack AI Logo" />
+  <img src="assets/images/logo.png" width="150" height="150" alt="MediTrack AI Logo" style="border-radius: 24px;" />
   <h1>💊 MediTrack AI</h1>
   <p><b>State-of-the-Art Smart Medicine Reminder & Health Analytics System</b></p>
 </div>
