@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../routes/app_router.dart';
+import '../../widgets/app_logo_widget.dart';
 
 /// Animated splash screen with gradient and logo
 class SplashScreen extends StatefulWidget {
@@ -13,22 +14,11 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
+class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat(reverse: true);
-
-    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
 
     // Navigate after 3 seconds
     Future.delayed(const Duration(milliseconds: 3000), () {
@@ -40,7 +30,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _pulseController.dispose();
     super.dispose();
   }
 
@@ -95,40 +84,11 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Animated logo
-                    AnimatedBuilder(
-                      animation: _pulseAnimation,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _pulseAnimation.value,
-                          child: child,
-                        );
-                      },
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 2,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.1),
-                              blurRadius: 40,
-                              spreadRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '💊',
-                            style: TextStyle(fontSize: 54),
-                          ),
-                        ),
-                      ),
+                    // Animated interactive logo
+                    const AppLogoWidget(
+                      size: 120,
+                      interactive: true,
+                      autoAnimate: true,
                     )
                         .animate()
                         .fadeIn(delay: 200.ms, duration: 600.ms)
