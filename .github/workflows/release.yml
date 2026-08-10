@@ -1,0 +1,86 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'          # triggers on version tags like v1.0.0, v1.2.3
+  workflow_dispatch:       # also allows manual trigger from GitHub Actions UI
+    inputs:
+      version:
+        description: 'Release version (e.g. v1.0.1)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build-and-release:
+    name: Build APK & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Java (required for Android build) ──────────────
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ── 3. Set up Flutter ────────────────────────────────────────
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      # ── 4. Restore google-services.json from secret ──────────────
+      - name: Write google-services.json
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
+
+      # ── 5. Install dependencies ───────────────────────────────────
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      # ── 6. Build release APK ──────────────────────────────────────
+      - name: Build release APK
+        run: flutter build apk --release --no-pub
+
+      # ── 7. Rename APK with version ────────────────────────────────
+      - name: Rename APK
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             build/app/outputs/flutter-apk/MediTrack-AI-${VERSION}.apk
+          echo "APK_PATH=build/app/outputs/flutter-apk/MediTrack-AI-${VERSION}.apk" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      # ── 8. Create GitHub Release & Upload APK ────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: "MediTrack AI ${{ env.VERSION }}"
+          body: |
+            ## 📱 MediTrack AI ${{ env.VERSION }}
+
+            ### ⬇️ Download
+            Download the APK below and install it on your Android device (Android 6.0+).
+
+            > **Note:** You may need to enable *Install from unknown sources* in your device settings.
+
+            ### 🆕 What's New
+            - Interactive animated app logo with pulse & particle effects
+            - Improved splash screen animation
+            - Bug fixes and performance improvements
+
+            ### 📋 Requirements
+            - Android 6.0 (API 23) or higher
+            - ~65 MB storage space
+          files: ${{ env.APK_PATH }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
