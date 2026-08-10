@@ -3,13 +3,13 @@ name: Build & Release Android APK
 on:
   push:
     tags:
-      - 'v*.*.*'          # triggers on version tags like v1.0.0, v1.2.3
-  workflow_dispatch:       # allows manual trigger from GitHub Actions UI
+      - 'v*.*.*'
+  workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g. v1.0.1)'
+        description: 'Release version (e.g. v1.0.2)'
         required: true
-        default: 'v1.0.1'
+        default: 'v1.0.2'
 
 jobs:
   build-and-release:
@@ -17,18 +17,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # ── 2. Set up Java (required for Android build) ──────────────
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # ── 3. Set up Flutter ────────────────────────────────────────
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -36,10 +35,6 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # ── 4. Restore Firebase config files from secrets ────────────
-      #    Add these secrets in repo Settings > Secrets > Actions:
-      #    GOOGLE_SERVICES_JSON : base64 encoded android/app/google-services.json
-      #    FIREBASE_OPTIONS_DART : base64 encoded lib/firebase_options.dart
       - name: Write google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
@@ -48,22 +43,21 @@ jobs:
             echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
             echo "google-services.json restored from secret"
           else
-            echo "WARNING: GOOGLE_SERVICES_JSON secret not set"
-            echo "Creating placeholder google-services.json..."
+            echo "WARNING: using embedded real-project placeholder"
             cat > android/app/google-services.json << 'EOF'
           {
             "project_info": {
               "project_number": "483958825006",
-              "project_id": "meditrack-ai",
-              "storage_bucket": "meditrack-ai.appspot.com"
+              "project_id": "meditrack-ai-c5d5a",
+              "storage_bucket": "meditrack-ai-c5d5a.firebasestorage.app"
             },
             "client": [
               {
                 "client_info": {
-                  "mobilesdk_app_id": "1:483958825006:android:placeholder",
-                  "android_client_info": { "package_name": "com.example.meditrack_ai" }
+                  "mobilesdk_app_id": "1:483958825006:android:91d91ccd82bddb2ee53fbf",
+                  "android_client_info": { "package_name": "com.meditrack.meditrack_ai" }
                 },
-                "api_key": [{ "current_key": "placeholder" }],
+                "api_key": [{ "current_key": "AIzaSyCjwcETN3NYAa4-Jf0cU-jJf_7oD5Pfh_U" }],
                 "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
               }
             ],
@@ -80,19 +74,29 @@ jobs:
             echo "$FIREBASE_OPTIONS_DART" | base64 -d > lib/firebase_options.dart
             echo "firebase_options.dart restored from secret"
           else
-            echo "WARNING: FIREBASE_OPTIONS_DART secret not set - checking if file exists in repo"
-            ls lib/firebase_options.dart 2>/dev/null && echo "File found in repo" || echo "File NOT found"
+            ls lib/firebase_options.dart 2>/dev/null && echo "firebase_options.dart found in repo" || echo "WARNING: firebase_options.dart not found"
           fi
 
-      # ── 5. Install dependencies ───────────────────────────────────
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      # ── 6. Build release APK ──────────────────────────────────────
       - name: Build release APK
         run: flutter build apk --release --no-pub
 
-      # ── 7. Rename APK with version ────────────────────────────────
+      - name: Create and push git tag (workflow_dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists, skipping"
+          else
+            git tag "$VERSION"
+            git push origin "$VERSION"
+            echo "Tag $VERSION created and pushed"
+          fi
+
       - name: Rename APK
         run: |
           VERSION="${{ github.event.inputs.version || github.ref_name }}"
@@ -102,28 +106,20 @@ jobs:
           echo "APK_PATH=build/app/outputs/flutter-apk/MediTrack-AI-${VERSION}.apk" >> $GITHUB_ENV
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
-      # ── 8. Create GitHub Release & Upload APK ────────────────────
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.VERSION }}
           name: "MediTrack AI ${{ env.VERSION }}"
           body: |
-            ## 📱 MediTrack AI ${{ env.VERSION }}
+            ## ?? MediTrack AI ${{ env.VERSION }}
 
-            ### ⬇️ How to Install
+            ### ?? How to Install
             1. Download **`${{ env.APK_NAME }}`** below
-            2. On your Android phone, go to **Settings → Security → Unknown Sources** (or *Install unknown apps*) and allow it
-            3. Open the downloaded APK file and tap **Install**
+            2. On Android go to **Settings ? Security ? Install unknown apps** and allow it
+            3. Open the downloaded APK and tap **Install**
 
-            > Requires Android 6.0 (API 23) or higher • ~65 MB
-
-            ### 🆕 What's New
-            - Interactive animated app logo with pulse & particle burst on tap
-            - Rotating dashed ring animation around logo
-            - Glassmorphism design with blue-cyan gradient
-            - Improved splash screen animations
-            - Bug fixes and performance improvements
+            > Requires Android 6.0 (API 23) or higher � ~60 MB
           files: ${{ env.APK_PATH }}
           draft: false
           prerelease: false
