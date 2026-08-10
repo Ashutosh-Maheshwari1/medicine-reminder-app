@@ -4,12 +4,12 @@ on:
   push:
     tags:
       - 'v*.*.*'          # triggers on version tags like v1.0.0, v1.2.3
-  workflow_dispatch:       # also allows manual trigger from GitHub Actions UI
+  workflow_dispatch:       # allows manual trigger from GitHub Actions UI
     inputs:
       version:
         description: 'Release version (e.g. v1.0.1)'
         required: true
-        default: 'v1.0.0'
+        default: 'v1.0.1'
 
 jobs:
   build-and-release:
@@ -36,9 +36,53 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # ── 4. Restore google-services.json from secret ──────────────
+      # ── 4. Restore Firebase config files from secrets ────────────
+      #    Add these secrets in repo Settings > Secrets > Actions:
+      #    GOOGLE_SERVICES_JSON : base64 encoded android/app/google-services.json
+      #    FIREBASE_OPTIONS_DART : base64 encoded lib/firebase_options.dart
       - name: Write google-services.json
-        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > android/app/google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+            echo "google-services.json restored from secret"
+          else
+            echo "WARNING: GOOGLE_SERVICES_JSON secret not set"
+            echo "Creating placeholder google-services.json..."
+            cat > android/app/google-services.json << 'EOF'
+          {
+            "project_info": {
+              "project_number": "483958825006",
+              "project_id": "meditrack-ai",
+              "storage_bucket": "meditrack-ai.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:483958825006:android:placeholder",
+                  "android_client_info": { "package_name": "com.example.meditrack_ai" }
+                },
+                "api_key": [{ "current_key": "placeholder" }],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+          fi
+
+      - name: Write firebase_options.dart
+        env:
+          FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
+        run: |
+          if [ -n "$FIREBASE_OPTIONS_DART" ]; then
+            echo "$FIREBASE_OPTIONS_DART" | base64 -d > lib/firebase_options.dart
+            echo "firebase_options.dart restored from secret"
+          else
+            echo "WARNING: FIREBASE_OPTIONS_DART secret not set - checking if file exists in repo"
+            ls lib/firebase_options.dart 2>/dev/null && echo "File found in repo" || echo "File NOT found"
+          fi
 
       # ── 5. Install dependencies ───────────────────────────────────
       - name: Install Flutter dependencies
@@ -54,6 +98,7 @@ jobs:
           VERSION="${{ github.event.inputs.version || github.ref_name }}"
           cp build/app/outputs/flutter-apk/app-release.apk \
              build/app/outputs/flutter-apk/MediTrack-AI-${VERSION}.apk
+          echo "APK_NAME=MediTrack-AI-${VERSION}.apk" >> $GITHUB_ENV
           echo "APK_PATH=build/app/outputs/flutter-apk/MediTrack-AI-${VERSION}.apk" >> $GITHUB_ENV
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
@@ -66,19 +111,19 @@ jobs:
           body: |
             ## 📱 MediTrack AI ${{ env.VERSION }}
 
-            ### ⬇️ Download
-            Download the APK below and install it on your Android device (Android 6.0+).
+            ### ⬇️ How to Install
+            1. Download **`${{ env.APK_NAME }}`** below
+            2. On your Android phone, go to **Settings → Security → Unknown Sources** (or *Install unknown apps*) and allow it
+            3. Open the downloaded APK file and tap **Install**
 
-            > **Note:** You may need to enable *Install from unknown sources* in your device settings.
+            > Requires Android 6.0 (API 23) or higher • ~65 MB
 
             ### 🆕 What's New
-            - Interactive animated app logo with pulse & particle effects
-            - Improved splash screen animation
+            - Interactive animated app logo with pulse & particle burst on tap
+            - Rotating dashed ring animation around logo
+            - Glassmorphism design with blue-cyan gradient
+            - Improved splash screen animations
             - Bug fixes and performance improvements
-
-            ### 📋 Requirements
-            - Android 6.0 (API 23) or higher
-            - ~65 MB storage space
           files: ${{ env.APK_PATH }}
           draft: false
           prerelease: false
