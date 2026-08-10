@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/app_logo_widget.dart';
+import '../onboarding/onboarding_screen.dart';
 
 /// Animated splash screen with gradient and logo
 class SplashScreen extends StatefulWidget {
@@ -20,11 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // Navigate after 3 seconds
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      if (mounted) {
-        context.go(Routes.login);
-      }
+    // After splash, check if first-time user → show onboarding, else login
+    Future.delayed(const Duration(milliseconds: 3000), () async {
+      if (!mounted) return;
+      final done = await hasCompletedOnboarding();
+      if (!mounted) return;
+      context.go(done ? Routes.login : Routes.onboarding);
     });
   }
 
