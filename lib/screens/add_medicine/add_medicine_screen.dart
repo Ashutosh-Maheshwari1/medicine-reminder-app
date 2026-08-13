@@ -128,7 +128,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen>
 
     final medicine = MedicineModel(
       id: _isEditing ? widget.medicine!.id : const Uuid().v4(),
-      userId: '',
+      userId: '', // will be set by the provider via copyWith
       name: _nameController.text.trim(),
       dosage: _dosageController.text.trim(),
       type: _selectedType,

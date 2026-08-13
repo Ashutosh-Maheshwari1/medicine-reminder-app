@@ -174,7 +174,8 @@ class MedicineNotifier extends AsyncNotifier<void> {
   Future<void> addMedicine(MedicineModel medicine) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final newMed = medicine.copyWith(id: _uuid.v4());
+      // Preserve the id generated in the screen; inject the real userId
+      final newMed = medicine.copyWith(userId: _userId);
       await _repo.addMedicine(_userId, newMed);
       await _notifService.scheduleNotificationsForMedicine(newMed);
     });
@@ -183,9 +184,11 @@ class MedicineNotifier extends AsyncNotifier<void> {
   Future<void> updateMedicine(MedicineModel medicine) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await _repo.updateMedicine(_userId, medicine);
-      await _notifService.cancelNotificationsForMedicine(medicine.id);
-      await _notifService.scheduleNotificationsForMedicine(medicine);
+      // Ensure userId is always correct on update too
+      final updatedMed = medicine.copyWith(userId: _userId);
+      await _repo.updateMedicine(_userId, updatedMed);
+      await _notifService.cancelNotificationsForMedicine(updatedMed.id);
+      await _notifService.scheduleNotificationsForMedicine(updatedMed);
     });
   }
 
