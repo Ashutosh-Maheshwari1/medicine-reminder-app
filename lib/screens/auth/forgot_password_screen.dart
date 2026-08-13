@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,9 +35,35 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     try {
       await ref
           .read(authNotifierProvider.notifier)
-          .sendPasswordReset(_emailController.text);
+          .sendPasswordReset(_emailController.text.trim());
       if (mounted) setState(() => _isSent = true);
-    } catch (_) {
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        String message;
+        switch (e.code) {
+          case 'user-not-found':
+            message = 'No account found with this email. Please sign up first.';
+            break;
+          case 'invalid-email':
+            message = 'The email address is not valid.';
+            break;
+          case 'too-many-requests':
+            message = 'Too many attempts. Please wait a few minutes and try again.';
+            break;
+          default:
+            message = 'Failed to send reset email: ${e.message ?? e.code}';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: AppColors.danger,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -185,7 +212,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           const SizedBox(height: 12),
 
           Text(
-            'We\'ve sent a password reset link to\n${_emailController.text}',
+            'We\'ve sent a password reset link to\n${_emailController.text.trim()}\n\nℹ️ Check your Spam / Junk folder if you don\'t see it.',
             style: GoogleFonts.outfit(
               fontSize: 15,
               color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,

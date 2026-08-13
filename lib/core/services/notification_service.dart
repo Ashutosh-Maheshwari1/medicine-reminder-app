@@ -18,7 +18,7 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
-  static const String _channelId = 'meditrack_reminders';
+  static const String _channelId = 'meditrack_reminders_v2';
   static const String _channelName = 'Medicine Reminders';
   static const String _channelDesc = 'Reminders to take your medicines on time.';
 
@@ -47,13 +47,14 @@ class NotificationService {
       onDidReceiveBackgroundNotificationResponse: _onBackgroundNotificationResponse,
     );
 
-    // Create notification channel for Android
+    // Create notification channel for Android with custom sound
     const channel = AndroidNotificationChannel(
       _channelId,
       _channelName,
       description: _channelDesc,
       importance: Importance.high,
       playSound: true,
+      sound: RawResourceNotificationSound('aaj_tak_music'),
       enableVibration: true,
     );
 
@@ -125,6 +126,8 @@ class NotificationService {
       channelDescription: _channelDesc,
       importance: Importance.high,
       priority: Priority.high,
+      playSound: true,
+      sound: const RawResourceNotificationSound('aaj_tak_music'),
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
@@ -160,6 +163,7 @@ class NotificationService {
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      sound: 'aaj_tak_music.mp3',
     );
 
     final details = NotificationDetails(
@@ -200,6 +204,8 @@ class NotificationService {
       channelDescription: _channelDesc,
       importance: Importance.high,
       priority: Priority.high,
+      playSound: true,
+      sound: const RawResourceNotificationSound('aaj_tak_music'),
       icon: '@mipmap/ic_launcher',
     );
 
@@ -229,6 +235,8 @@ class NotificationService {
       channelDescription: _channelDesc,
       importance: Importance.high,
       priority: Priority.high,
+      playSound: true,
+      sound: const RawResourceNotificationSound('aaj_tak_music'),
     );
 
     await _plugin.show(
@@ -279,11 +287,13 @@ class NotificationService {
           snoozeTz,
           const NotificationDetails(
             android: AndroidNotificationDetails(
-              'meditrack_reminders',
+              'meditrack_reminders_v2',
               'Medicine Reminders',
               channelDescription: 'Reminders to take your medicines on time.',
               importance: Importance.high,
               priority: Priority.high,
+              playSound: true,
+              sound: RawResourceNotificationSound('aaj_tak_music'),
             ),
           ),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
