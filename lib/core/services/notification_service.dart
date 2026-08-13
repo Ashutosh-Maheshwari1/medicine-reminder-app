@@ -54,7 +54,7 @@ class NotificationService {
       description: _channelDesc,
       importance: Importance.high,
       playSound: true,
-      sound: RawResourceNotificationSound('aaj_tak_music'),
+      sound: RawResourceAndroidNotificationSound('aaj_tak_music'),
       enableVibration: true,
     );
 
@@ -127,7 +127,7 @@ class NotificationService {
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
-      sound: const RawResourceNotificationSound('aaj_tak_music'),
+      sound: const RawResourceAndroidNotificationSound('aaj_tak_music'),
       icon: '@mipmap/ic_launcher',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(
@@ -198,14 +198,14 @@ class NotificationService {
     final snoozeTime = tz.TZDateTime.now(tz.local).add(const Duration(minutes: 10));
     final snoozeId = _getSnoozeId(medicine.id);
 
-    final androidDetails = AndroidNotificationDetails(
+    final androidDetails = const AndroidNotificationDetails(
       _channelId,
       _channelName,
       channelDescription: _channelDesc,
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
-      sound: const RawResourceNotificationSound('aaj_tak_music'),
+      sound: RawResourceAndroidNotificationSound('aaj_tak_music'),
       icon: '@mipmap/ic_launcher',
     );
 
@@ -229,14 +229,14 @@ class NotificationService {
 
   /// Show immediate notification (for testing)
   Future<void> showTestNotification(MedicineModel medicine) async {
-    final androidDetails = AndroidNotificationDetails(
+    final androidDetails = const AndroidNotificationDetails(
       _channelId,
       _channelName,
       channelDescription: _channelDesc,
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
-      sound: const RawResourceNotificationSound('aaj_tak_music'),
+      sound: RawResourceAndroidNotificationSound('aaj_tak_music'),
     );
 
     await _plugin.show(
@@ -293,7 +293,7 @@ class NotificationService {
               importance: Importance.high,
               priority: Priority.high,
               playSound: true,
-              sound: RawResourceNotificationSound('aaj_tak_music'),
+              sound: RawResourceAndroidNotificationSound('aaj_tak_music'),
             ),
           ),
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
