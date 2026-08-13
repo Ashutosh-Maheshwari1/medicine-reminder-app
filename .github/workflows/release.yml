@@ -1,4 +1,4 @@
-name: Build & Release Android APK
+ï»¿name: Build & Release Android APK
 
 on:
   push:
@@ -7,9 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g. v1.0.2)'
+        description: 'Release version (e.g. v1.0.4)'
         required: true
-        default: 'v1.0.2'
+        default: 'v1.0.4'
+
+permissions:
+  contents: write
 
 jobs:
   build-and-release:
@@ -119,7 +122,7 @@ jobs:
             2. On Android go to **Settings ? Security ? Install unknown apps** and allow it
             3. Open the downloaded APK and tap **Install**
 
-            > Requires Android 6.0 (API 23) or higher • ~60 MB
+            > Requires Android 6.0 (API 23) or higher ï¿½ ~60 MB
           files: ${{ env.APK_PATH }}
           draft: false
           prerelease: false
