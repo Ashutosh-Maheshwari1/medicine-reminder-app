@@ -13,3 +13,10 @@
 # Flutter Local Notifications Plugin
 -keep class com.dexterous.flutterlocalnotifications.** { *; }
 -keepclassmembers class com.dexterous.flutterlocalnotifications.** { *; }
+
+# Preserve Android R raw resources from obfuscation/shrinking
+-keep class **.R$* { *; }
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+

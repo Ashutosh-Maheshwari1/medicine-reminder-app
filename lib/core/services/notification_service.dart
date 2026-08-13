@@ -171,18 +171,54 @@ class NotificationService {
       iOS: iosDetails,
     );
 
-    await _plugin.zonedSchedule(
-      id,
-      '💊 Time to Take Medicine',
-      '${medicine.name} · ${medicine.dosage}',
-      scheduledTz,
-      details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-      payload: medicine.id,
-    );
+    try {
+      await _plugin.zonedSchedule(
+        id,
+        '💊 Time to Take Medicine',
+        '${medicine.name} · ${medicine.dosage}',
+        scheduledTz,
+        details,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: medicine.id,
+      );
+    } catch (e) {
+      // Fallback to default system sound if custom raw sound is unavailable
+      final fallbackAndroidDetails = AndroidNotificationDetails(
+        _channelId,
+        _channelName,
+        channelDescription: _channelDesc,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+        styleInformation: androidDetails.styleInformation,
+        actions: androidDetails.actions,
+      );
+      final fallbackDetails = NotificationDetails(
+        android: fallbackAndroidDetails,
+        iOS: const DarwinNotificationDetails(
+          categoryIdentifier: 'medicine_reminder',
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      );
+      await _plugin.zonedSchedule(
+        id,
+        '💊 Time to Take Medicine',
+        '${medicine.name} · ${medicine.dosage}',
+        scheduledTz,
+        fallbackDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: medicine.id,
+      );
+    }
   }
 
   /// Cancel all notifications for a medicine
